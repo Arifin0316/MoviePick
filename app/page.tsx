@@ -1,10 +1,14 @@
 "use client";
-
-import React from "react";
-
+import HeroSection from "../components/heroSection";
+import CardGrid from "../components/cardGrid";
+import MovieRecommendations from "../components/movieRecommendations";
 
 export default function Home() {
   return (
-    <div>Home</div>
-  )
+    <div className=" bg-black">
+      <HeroSection />
+      <CardGrid />
+      <MovieRecommendations />
+    </div>
+  );
 }

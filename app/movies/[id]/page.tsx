@@ -33,7 +33,7 @@ async function MoviesCatagoripage({params} : {params: Promise<{id: string}>}) {
   }
 
   return (
-    <div className="bg-black">
+    <div className="bg-black mt-15 ">
       <CardGridMovie 
         category={category.endpoint}
         title={category.title}

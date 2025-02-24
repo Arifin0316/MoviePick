@@ -6,12 +6,13 @@ import MovieRecommendations from "@/components/MovieRecommendationsDetail"
  async function DetailMoviePage({params} : {params: Promise<{id: string}>}) {
   const id = (await params).id
   return (
-    <div className="">
+    <div className="mt-15">
       <HeroSection movieId={parseInt(id)}/>
+      <div className="bg-gradient-to-b from-black via-gray-900 to-black">
       <MovieCredits movieId={parseInt(id)}/>
       <MovieMetadata movieId={parseInt(id)}/>
       <MovieRecommendations movieId={parseInt(id)}/>
-      <h1>{id}</h1>
+      </div>
     </div>
   )
 }

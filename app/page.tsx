@@ -5,7 +5,7 @@ import MovieRecommendations from "../components/movieRecommendations";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
+    <main className="min-h-screen mt-15 bg-gradient-to-b from-black via-gray-900 to-black">
       {/* Hero Section */}
       <section className="relative">
         <HeroSection />

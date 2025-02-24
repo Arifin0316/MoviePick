@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search as SearchIcon, X, Loader2 } from 'lucide-react';
+import { Search as SearchIcon, X, Loader2, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -75,18 +75,18 @@ const Search = () => {
     <div className="relative w-full max-w-xl mx-auto" ref={searchRef}>
       {/* Search Input */}
       <div className="relative">
-        <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white z-10" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Cari film..."
-          className="w-full pl-12 pr-10 py-3 rounded-full bg-gray-100 focus:bg-white border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none"
+          className="w-full pl-12 pr-10 py-3 rounded-full bg-gray-800/50 backdrop-blur-sm border border-gray-700 focus:border-red-600 focus:ring-2 focus:ring-red-600/20 text-white placeholder-gray-400 transition-all duration-200 outline-none"
         />
         {query && (
           <button
             onClick={clearSearch}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors duration-200"
           >
             {isLoading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -99,50 +99,47 @@ const Search = () => {
 
       {/* Search Results Dropdown */}
       {isOpen && results.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[70vh] overflow-auto z-50">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900/90 backdrop-blur-md rounded-lg border border-gray-700 max-h-96 overflow-auto z-50 shadow-xl shadow-black/30">
           {results.map((movie) => (
-            <Link href={movie.id.toString()} key={movie.id}>
-            <div
-              onClick={() => setIsOpen(false)}
-              className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
-            >
-              <div className="relative w-16 h-24 flex-shrink-0">
-                {movie.poster_path ? (
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
-                    alt={movie.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="rounded object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
-                    <SearchIcon className="w-6 h-6 text-gray-400" />
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-semibold text-gray-900 truncate">
-                  {movie.title}
-                </h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm text-gray-600">
-                    {movie.release_date?.split('-')[0] || 'TBA'}
-                  </span>
-                  {movie.vote_average > 0 && (
-                    <>
-                      <span className="text-gray-400">•</span>
-                      <div className="flex items-center">
-                        <span className="text-sm text-yellow-500">★</span>
-                        <span className="ml-1 text-sm text-gray-600">
+            <Link href={`/movie/${movie.id}`} key={movie.id}>
+              <div
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-4 p-4 hover:bg-gray-800/70 transition-colors duration-200 cursor-pointer border-b border-gray-800 last:border-0"
+              >
+                <div className="relative w-16 h-24 flex-shrink-0">
+                  {movie.poster_path ? (
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
+                      alt={movie.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="rounded object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-800 rounded flex items-center justify-center">
+                      <SearchIcon className="w-6 h-6 text-gray-500" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-semibold text-white truncate">
+                    {movie.title}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-sm text-gray-400 bg-gray-800/80 px-2 py-0.5 rounded-full">
+                      {movie.release_date?.split('-')[0] || 'TBA'}
+                    </span>
+                    {movie.vote_average > 0 && (
+                      <div className="flex items-center bg-gray-800/80 px-2 py-0.5 rounded-full">
+                        <Star className="w-3 h-3 text-yellow-400 mr-1" fill="#FACC15" />
+                        <span className="text-sm text-gray-300">
                           {movie.vote_average.toFixed(1)}
                         </span>
                       </div>
-                    </>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
             </Link>
           ))}
         </div>
@@ -150,7 +147,7 @@ const Search = () => {
 
       {/* No Results Message */}
       {isOpen && query && !isLoading && results.length === 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-white rounded-lg shadow-xl border border-gray-200 text-center text-gray-500">
+        <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-gray-900/90 backdrop-blur-md rounded-lg border border-gray-700 text-center text-gray-300 shadow-xl shadow-black/30">
           Tidak ada film yang ditemukan
         </div>
       )}

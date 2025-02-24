@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, Film } from "lucide-react";
 
 interface Movie {
   id: number;
@@ -52,13 +52,16 @@ const MovieRecommendations = ({ movieId }: MovieRecommendationsProps) => {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4">
-        <div className="h-8 bg-gray-200 rounded w-48 mb-6"></div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 bg-gray-800 rounded-full animate-pulse"></div>
+          <div className="h-8 bg-gray-800 rounded w-48 animate-pulse"></div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="bg-gray-200 h-72 rounded animate-pulse"
+              className="bg-gray-800 aspect-[2/3] rounded-lg animate-pulse"
             ></div>
           ))}
         </div>
@@ -67,25 +70,44 @@ const MovieRecommendations = ({ movieId }: MovieRecommendationsProps) => {
   }
 
   if (error) {
-    return <div className="container mx-auto p-4 text-red-500">{error}</div>;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-900/50 border border-red-700 text-red-200 rounded-lg p-4">
+          {error}
+        </div>
+      </div>
+    );
   }
 
   if (recommendations.length === 0) {
     return (
-      <div className="container mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-6">Film Serupa</h2>
-        <p className="text-gray-600">Tidak ada rekomendasi film saat ini.</p>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center gap-3 mb-6">
+          <Film className="w-8 h-8 text-red-600" />
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">
+            Film Serupa
+          </h2>
+        </div>
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg p-6">
+          <p className="text-gray-400">Tidak ada rekomendasi film saat ini.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6">Film Serupa</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex items-center gap-3 mb-6">
+        <Film className="w-8 h-8 text-red-600" />
+        <h2 className="text-2xl sm:text-3xl font-bold text-white">
+          Film Serupa
+        </h2>
+      </div>
+      
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
         {recommendations.map((movie) => (
-          <Link href={`${movie.id}`} key={movie.id}>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+          <Link href={`/${movie.id}`} key={movie.id}>
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-red-600/10">
               <div className="relative aspect-[2/3]">
                 <Image
                   src={
@@ -98,19 +120,17 @@ const MovieRecommendations = ({ movieId }: MovieRecommendationsProps) => {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover"
                 />
+                <div className="absolute top-2 right-2 bg-black/70 text-white text-xs font-medium px-2 py-1 rounded-full flex items-center">
+                  <Star className="w-3 h-3 text-yellow-400 mr-1" fill="#FACC15" />
+                  {movie.vote_average.toFixed(1)}
+                </div>
               </div>
               <div className="p-4">
-                <h3 className="font-semibold text-sm mb-2 line-clamp-1">
+                <h3 className="font-semibold text-sm mb-2 text-white line-clamp-1">
                   {movie.title}
                 </h3>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                    <span className="ml-1 text-sm text-gray-600">
-                      {movie.vote_average.toFixed(1)}
-                    </span>
-                  </div>
-                  <span className="text-sm text-gray-500">
+                <div className="flex justify-end">
+                  <span className="text-xs text-gray-400 bg-gray-700/70 px-2 py-0.5 rounded-full">
                     {new Date(movie.release_date).getFullYear()}
                   </span>
                 </div>

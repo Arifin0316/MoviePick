@@ -84,7 +84,7 @@ const MovieRecommendations = ({ movieId }: MovieRecommendationsProps) => {
       <h2 className="text-2xl font-bold mb-6">Film Serupa</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {recommendations.map((movie) => (
-          <Link href={`/movie/${movie.id}`} key={movie.id}>
+          <Link href={`${movie.id}`} key={movie.id}>
             <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
               <div className="relative aspect-[2/3]">
                 <Image

@@ -1,38 +1,68 @@
-import React from 'react';
-import Image from 'next/image';
-import { Star } from 'lucide-react';
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 interface MovieCardProps {
+  id: number;
   title: string;
-  posterPath: string;
+  posterPath: string | null;
   rating: number;
   releaseDate: string;
-  overview: string;
 }
 
-const MovieCard = ({ title, posterPath, rating, releaseDate, overview }: MovieCardProps) => {
+const MovieCard = ({
+  title,
+  posterPath,
+  rating,
+  releaseDate,
+  id,
+}: MovieCardProps) => {
+  // Handle missing poster image
+  const imageUrl = posterPath 
+    ? `https://image.tmdb.org/t/p/w500${posterPath}`
+    : '/placeholder-movie.jpg'; // Pastikan ada gambar placeholder di public folder
+
+  // Handle invalid rating
+  const formattedRating = !isNaN(rating) ? rating.toFixed(1) : "N/A";
+
+  // Handle invalid date
+  const getYear = (dateString: string) => {
+    const date = new Date(dateString);
+    return !isNaN(date.getTime()) ? date.getFullYear() : "TBA";
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-200">
-      <div className="relative h-64 w-full">
-        <Image
-          src={`https://image.tmdb.org/t/p/w500${posterPath}`}
-          alt={title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover"
-        />
-      </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 truncate">{title}</h3>
-        <div className="flex items-center mt-2">
-          <Star className="w-5 h-5 text-yellow-400" />
-          <span className="ml-1 text-gray-700">{rating.toFixed(1)}</span>
-          <span className="mx-2 text-gray-400">•</span>
-          <span className="text-gray-700">{new Date(releaseDate).getFullYear()}</span>
+    <Link href={`/${id}`} className="block">
+      <div className="transition-transform duration-200 hover:scale-105">
+        <div className="relative w-full aspect-[2/3] bg-gray-800 rounded-lg overflow-hidden">
+          <Image
+            src={imageUrl}
+            alt={`Poster for ${title}`}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            className="object-cover"
+            priority={false}
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute bottom-0 p-4 w-full">
+              <div className="flex items-center justify-between text-white">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-yellow-400">★</span>
+                  <span className="font-medium">{formattedRating}</span>
+                </div>
+                <span className="text-sm">{getYear(releaseDate)}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <p className="mt-2 text-gray-600 text-sm line-clamp-2">{overview}</p>
+        <div className="mt-2 space-y-1">
+          <h3 className="text-gray-100 font-medium line-clamp-1" title={title}>
+            {title}
+          </h3>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

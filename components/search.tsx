@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search as SearchIcon, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface SearchResult {
   id: number;
@@ -100,8 +101,9 @@ const Search = () => {
       {isOpen && results.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[70vh] overflow-auto z-50">
           {results.map((movie) => (
+            <Link href={movie.id.toString()} key={movie.id}>
             <div
-              key={movie.id}
+              onClick={() => setIsOpen(false)}
               className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
             >
               <div className="relative w-16 h-24 flex-shrink-0">
@@ -141,6 +143,7 @@ const Search = () => {
                 </div>
               </div>
             </div>
+            </Link>
           ))}
         </div>
       )}

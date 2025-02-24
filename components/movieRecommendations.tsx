@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import MovieCard from './movieCard';
+import { Film } from 'lucide-react';
 
 interface Movie {
   id: number;
@@ -14,18 +14,16 @@ interface Movie {
 const MovieRecommendations = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedGenre, setSelectedGenre] = useState<number>(28); // Default to Action
+  const [selectedGenre, setSelectedGenre] = useState<number>(28);
 
-  // Predefined genres
   const genres = [
-    { id: 28, name: 'Aksi' },
-    { id: 12, name: 'Petualangan' },
-    { id: 36, name: 'Sejarah' },
-    { id: 14, name: 'Fantasi' },
-    { id: 878, name: 'Cerita Fiksi' },
+    { id: 28, name: 'Aksi', icon: '🎬' },
+    { id: 12, name: 'Petualangan', icon: '🗺️' },
+    { id: 36, name: 'Sejarah', icon: '📚' },
+    { id: 14, name: 'Fantasi', icon: '🔮' },
+    { id: 878, name: 'Cerita Fiksi', icon: '🚀' },
   ];
 
-  // Fetch movies by genre
   useEffect(() => {
     const fetchMoviesByGenre = async () => {
       setLoading(true);
@@ -45,71 +43,81 @@ const MovieRecommendations = () => {
   }, [selectedGenre]);
 
   return (
-    <div className="container mx-auto px-10 py-12">
-      {/* Genre Buttons */}
-      <div className="mb-6">
-        <div className="flex flex-wrap gap-2">
-          {genres.map((genre) => (
-            <button
-              key={genre.id}
-              onClick={() => setSelectedGenre(genre.id)}
-              className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                selectedGenre === genre.id
-                  ? 'bg-red-600 text-white'
-                  : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-              }`}
-            >
-              {genre.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Movies Container with Vertical Scroll */}
-      <div className="h-[70vh] overflow-y-auto pr-4 custom-scrollbar">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {loading ? (
-            // Loading Skeletons
-            [...Array(10)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="w-full aspect-[2/3] bg-gray-300 rounded-lg"></div>
-                <div className="h-4 bg-gray-300 rounded mt-2 w-3/4"></div>
-              </div>
-            ))
-          ) : (
-            // Movie Cards
-            movies.map((movie) => (
-              <Link href={movie.id.toString()} key={movie.id}>
-              <div
-                className="transition-transform duration-200 hover:scale-105"
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <Film className="w-8 h-8 text-red-600" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              Rekomendasi Film
+            </h2>
+          </div>
+          
+          {/* Genre Selection */}
+          <div className="flex flex-wrap gap-3">
+            {genres.map((genre) => (
+              <button
+                key={genre.id}
+                onClick={() => setSelectedGenre(genre.id)}
+                className={`
+                  group relative px-6 py-2.5 rounded-xl transition-all duration-300
+                  ${selectedGenre === genre.id 
+                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
+                    : 'bg-gray-800/50 text-gray-300 hover:bg-gray-800 hover:text-white'
+                  }
+                  backdrop-blur-sm border border-gray-700
+                  flex items-center gap-2
+                `}
               >
-                <div className="relative w-full aspect-[2/3]">
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt={movie.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="rounded-lg object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-0 p-4 w-full">
-                      <div className="flex items-center justify-between text-white">
-                        <div className="flex items-center gap-1">
-                          <span>★</span>
-                          <span>{movie.vote_average.toFixed(1)}</span>
-                        </div>
-                        <span>{new Date(movie.release_date).getFullYear()}</span>
-                      </div>
+                <span className="text-lg">{genre.icon}</span>
+                <span className="font-medium">{genre.name}</span>
+                {selectedGenre === genre.id && (
+                  <span className="absolute inset-0 rounded-xl bg-white/10 animate-pulse"></span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Movies Grid Section */}
+        <div className="relative">
+          <div className="h-[75vh] overflow-y-auto pr-4 custom-scrollbar">
+            {loading ? (
+              // Skeleton Loading
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+                {[...Array(10)].map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="w-full aspect-[2/3] bg-gray-800 rounded-lg"></div>
+                    <div className="space-y-3 mt-4">
+                      <div className="h-4 bg-gray-800 rounded-full w-3/4"></div>
+                      <div className="h-4 bg-gray-800 rounded-full w-1/2"></div>
                     </div>
                   </div>
-                </div>
-                <h3 className="mt-2 text-gray-100 font-medium truncate">
-                  {movie.title}
-                </h3>
+                ))}
               </div>
-              </Link>
-            ))
-          )}
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+                {movies.map((movie) => (
+                  <div 
+                    key={movie.id} 
+                    className="transform hover:scale-105 transition-all duration-300"
+                  >
+                    <MovieCard
+                      id={movie.id}
+                      title={movie.title}
+                      posterPath={movie.poster_path}
+                      rating={movie.vote_average}
+                      releaseDate={movie.release_date}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Gradient Overlay for Scroll */}
+          <div className="absolute bottom-0 left-0 right-4 h-20 bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
         </div>
       </div>
     </div>

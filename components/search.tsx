@@ -101,7 +101,7 @@ const Search = () => {
       {isOpen && results.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900/90 backdrop-blur-md rounded-lg border border-gray-700 max-h-96 overflow-auto z-50 shadow-xl shadow-black/30">
           {results.map((movie) => (
-            <Link href={`/movie/${movie.id}`} key={movie.id}>
+            <Link href={`/${movie.id}`} key={movie.id}>
               <div
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-4 p-4 hover:bg-gray-800/70 transition-colors duration-200 cursor-pointer border-b border-gray-800 last:border-0"

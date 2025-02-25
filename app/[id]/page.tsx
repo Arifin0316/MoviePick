@@ -1,7 +1,8 @@
-import HeroSection from "@/components/header"
+
 import MovieCredits from "@/components/MovieCredits"
 import MovieMetadata from "@/components/movieMetadata"
 import MovieRecommendations from "@/components/MovieRecommendationsDetail"
+import HeroSection from "@/components/movie/HeroSection"
 
  async function DetailMoviePage({params} : {params: Promise<{id: string}>}) {
   const id = (await params).id

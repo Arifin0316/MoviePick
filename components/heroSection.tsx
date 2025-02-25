@@ -175,7 +175,7 @@ const HeroSection = () => {
         </div>
 
         {/* Content */}
-        <div className="relative h-full container mx-auto px-4 sm:px-6 lg:px-8 flex items-center z-10">
+        <div className="relative h-full container mx-auto px-4 sm:px-6 lg:px-40 2xl:px-8 flex items-center z-10">
           <AnimatePresence mode="wait">
             <motion.div 
               key={currentMovie.id}

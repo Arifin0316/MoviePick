@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Play, Star, Calendar, Clock, Users, TrendingUp, Tag } from 'lucide-react';
 import TrailerModal from './TrailerModal';
+import { motion } from 'framer-motion';
 
 interface Movie {
   id: number;
@@ -92,19 +93,33 @@ const HeroSection = ({ movieId }: HeroSectionProps) => {
     return `${hours}j ${remainingMinutes}m`;
   };
 
+  // Animasi untuk loading
   if (loading) {
     return (
-      <div className="h-[90vh] bg-gray-900 animate-pulse" />
+      <motion.div 
+        className="h-[90vh] bg-gray-900"
+        initial={{ opacity: 0 }}
+        animate={{ 
+          opacity: [0.5, 0.8, 0.5],
+          transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+        }}
+      />
     );
   }
 
+  // Animasi untuk error
   if (error || !movie) {
     return (
       <div className="h-[90vh] bg-gray-900 flex items-center justify-center">
-        <div className="bg-red-900/50 border border-red-700 text-red-200 rounded-lg p-6 max-w-md text-center">
+        <motion.div 
+          className="bg-red-900/50 border border-red-700 text-red-200 rounded-lg p-6 max-w-md text-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <h3 className="text-xl font-bold mb-2">Error</h3>
           <p>{error || 'Film tidak ditemukan'}</p>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -113,7 +128,12 @@ const HeroSection = ({ movieId }: HeroSectionProps) => {
     <>
       <div className="relative min-h-[90vh] w-full overflow-hidden">
         {/* Background Image with enhanced gradient overlay */}
-        <div className="absolute inset-0">
+        <motion.div 
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
           <Image
             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
             alt={movie.title}
@@ -123,12 +143,17 @@ const HeroSection = ({ movieId }: HeroSectionProps) => {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-        </div>
+        </motion.div>
 
         {/* Content */}
-        <div className="relative h-full container mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col md:flex-row items-center md:items-stretch gap-8">
+        <div className="relative h-full container mx-auto px-4 sm:px-6 z-10 lg:px-8 py-20 flex flex-col md:flex-row items-center md:items-stretch gap-8">
           {/* Poster */}
-          <div className="hidden md:block md:w-1/3 lg:w-1/4 flex-shrink-0">
+          <motion.div 
+            className="hidden md:block md:w-1/3 lg:w-1/4 flex-shrink-0"
+            initial={{ opacity: 0, scale: 0.8, rotateY: 30 }}
+            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
+          >
             <div className="relative w-full aspect-[2/3] rounded-lg overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-gray-700/50 transform hover:scale-105 transition-transform duration-300">
               <Image
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -137,101 +162,168 @@ const HeroSection = ({ movieId }: HeroSectionProps) => {
                 className="object-cover"
               />
             </div>
-          </div>
+          </motion.div>
           
           {/* Movie Info */}
           <div className="w-full md:w-2/3 lg:w-3/4 md:py-12 flex flex-col justify-center">
             <div className="md:max-w-3xl">
               {movie.tagline && (
-                <div className="mb-3 text-red-500 italic font-medium">
+                <motion.div 
+                  className="mb-3 text-red-500 italic font-medium"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
                   {movie.tagline}
-                </div>
+                </motion.div>
               )}
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
+              <motion.h1 
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
                 {movie.title}
-              </h1>
+              </motion.h1>
               
               {/* Movie Metadata Row */}
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 text-sm md:text-base">
+              <motion.div 
+                className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 text-sm md:text-base"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
                 {/* Rating */}
-                <div className="flex items-center bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full border border-yellow-600/30">
-                  <Star className="w-4 h-4 text-yellow-500 mr-1.5" fill="#EAB308" />
+                <motion.div 
+                  className="flex items-center bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full border border-yellow-600/30"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <motion.div
+                    animate={{ rotate: [0, 20, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                  >
+                    <Star className="w-4 h-4 text-yellow-500 mr-1.5" fill="#EAB308" />
+                  </motion.div>
                   <span className="text-yellow-400 font-semibold mr-1">
                     {movie.vote_average.toFixed(1)}
                   </span>
                   <span className="text-gray-400 text-xs">
                     ({movie.vote_count.toLocaleString()})
                   </span>
-                </div>
+                </motion.div>
                 
                 {/* Year */}
-                <div className="flex items-center text-gray-300">
+                <motion.div 
+                  className="flex items-center text-gray-300"
+                  whileHover={{ scale: 1.05 }}
+                >
                   <Calendar className="w-4 h-4 mr-1.5 text-gray-400" />
                   <span>{new Date(movie.release_date).getFullYear()}</span>
-                </div>
+                </motion.div>
                 
                 {/* Runtime */}
                 {movie.runtime > 0 && (
-                  <div className="flex items-center text-gray-300">
+                  <motion.div 
+                    className="flex items-center text-gray-300"
+                    whileHover={{ scale: 1.05 }}
+                  >
                     <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
                     <span>{formatRuntime(movie.runtime)}</span>
-                  </div>
+                  </motion.div>
                 )}
                 
                 {/* Popularity */}
-                <div className="flex items-center text-gray-300">
+                <motion.div 
+                  className="flex items-center text-gray-300"
+                  whileHover={{ scale: 1.05 }}
+                >
                   <TrendingUp className="w-4 h-4 mr-1.5 text-gray-400" />
                   <span>Popularitas: {Math.round(movie.popularity)}</span>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
               
               {/* Genres */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                {movie.genres.map((genre) => (
-                  <span 
+              <motion.div 
+                className="flex flex-wrap gap-2 mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                {movie.genres.map((genre, index) => (
+                  <motion.span 
                     key={genre.id}
                     className="bg-gray-800/70 backdrop-blur-sm text-gray-300 text-sm px-3 py-1 rounded-full border border-gray-700"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + (index * 0.1) }}
+                    whileHover={{ 
+                      scale: 1.05, 
+                      backgroundColor: "rgba(239, 68, 68, 0.2)",
+                      borderColor: "rgba(239, 68, 68, 0.5)"
+                    }}
                   >
                     {genre.name}
-                  </span>
+                  </motion.span>
                 ))}
-              </div>
+              </motion.div>
               
               {/* Overview */}
-              <p className="text-gray-300 text-base md:text-lg mb-8 leading-relaxed">
+              <motion.p 
+                className="text-gray-300 text-base md:text-lg mb-8 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
                 {movie.overview || "Belum ada deskripsi untuk film ini."}
-              </p>
+              </motion.p>
               
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4 mb-8">
-                <button
+              <motion.div 
+                className="flex flex-wrap gap-4 mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <motion.button
                   onClick={() => {
                     if (selectedVideo) {
                       setIsModalOpen(true);
                     }
                   }}
                   disabled={!selectedVideo}
-                  className={`px-6 py-3 rounded-lg flex items-center gap-2 transform hover:scale-105 transition-all duration-200 
+                  className={`px-6 py-3 rounded-lg flex items-center gap-2 transform transition-all duration-200 
                     ${selectedVideo 
                       ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/30' 
                       : 'bg-gray-700 cursor-not-allowed text-gray-300'}`}
+                  whileHover={selectedVideo ? { scale: 1.05 } : {}}
+                  whileTap={selectedVideo ? { scale: 0.95 } : {}}
                 >
-                  <Play className="w-5 h-5" />
+                  <motion.div
+                    animate={selectedVideo ? { x: [0, 5, 0] } : {}}
+                    transition={{ repeat: Infinity, repeatDelay: 2, duration: 0.8 }}
+                  >
+                    <Play className="w-5 h-5" />
+                  </motion.div>
                   Tonton Trailer
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
               
               {/* Available Videos */}
               {videos.length > 1 && (
-                <div className="mb-6">
+                <motion.div 
+                  className="mb-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                >
                   <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
                     <Tag className="w-4 h-4 text-red-500" />
                     Video Lainnya
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {videos.map((video) => (
-                      <button
+                    {videos.map((video, index) => (
+                      <motion.button
                         key={video.key}
                         onClick={() => {
                           setSelectedVideo(video);
@@ -242,22 +334,34 @@ const HeroSection = ({ movieId }: HeroSectionProps) => {
                             ? 'bg-red-900/30 text-red-200 border-red-800/50'
                             : 'bg-gray-800/50 text-gray-300 border-gray-700 hover:bg-gray-700/50'
                           }`}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.7 + (index * 0.1) }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         {video.name}
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               )}
               
               {/* Cast Teaser - Links to full credits below */}
-              <div className="flex items-center gap-2 text-gray-400 hover:text-red-400 transition-colors duration-200 cursor-pointer" onClick={() => {
-                // Scroll to MovieCredits component
-                document.getElementById('movie-credits')?.scrollIntoView({ behavior: 'smooth' });
-              }}>
+              <motion.div 
+                className="flex items-center gap-2 text-gray-400 cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                whileHover={{ color: "#f87171", x: 5 }}
+                onClick={() => {
+                  // Scroll to MovieCredits component
+                  document.getElementById('movie-credits')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 <Users className="w-5 h-5" />
                 <span>Lihat Semua Pemeran dan Kru</span>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>

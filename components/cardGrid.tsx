@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import MovieCard from "./movieCard";
 
 interface Movie {
@@ -33,22 +34,47 @@ const CardGrid = () => {
     };
 
     fetchMovies();
-  });
+  }, []); // Menambahkan array kosong agar useEffect hanya berjalan sekali
+
+  // Variasi animasi untuk container
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
   return (
     <main className="container mx-auto px-10 py-12">
-      <div className="flex items-center justify-between mb-8">
+      <motion.div 
+        className="flex items-center justify-between mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <h2 className="text-3xl font-bold text-gray-100">Film Populer</h2>
-      </div>
+      </motion.div>
 
       {loading ? (
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-100"></div>
+          <motion.div 
+            className="rounded-full h-12 w-12 border-b-2 border-gray-100"
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          ></motion.div>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6">
-            {movies.slice(0, moviesPerPage).map((movie) => (
+          <motion.div 
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {movies.slice(0, moviesPerPage).map((movie, index) => (
               <MovieCard
                 key={movie.id}
                 id={movie.id}
@@ -56,9 +82,10 @@ const CardGrid = () => {
                 posterPath={movie.poster_path}
                 rating={movie.vote_average}
                 releaseDate={movie.release_date}
+                index={index} // Mengirim index untuk staggering effect
               />
             ))}
-          </div>
+          </motion.div>
         </>
       )}
     </main>

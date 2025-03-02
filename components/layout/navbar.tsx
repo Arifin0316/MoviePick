@@ -91,7 +91,7 @@ const Navbar = () => {
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2">
               <Film className="h-8 w-8 text-red-600" />
-              <span className="text-xl font-bold text-gray-100">MovieApp</span>
+              <span className="text-xl font-bold text-gray-100">FilmPedia</span>
             </Link>
           </div>
 

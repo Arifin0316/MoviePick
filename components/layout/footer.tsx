@@ -18,12 +18,6 @@ const Footer = () => {
       { label: 'Sedang Tayang', href: '/tv/airing-today' },
       { label: 'Di TV', href: '/tv/on-the-air' },
       { label: 'Series Top Rating', href: '/tv/top-rated' },
-    ],
-    genres: [
-      { label: 'Aksi', href: '/genre/action' },
-      { label: 'Komedi', href: '/genre/comedy' },
-      { label: 'Drama', href: '/genre/drama' },
-      { label: 'Horor', href: '/genre/horror' },
     ]
   };
 
@@ -36,7 +30,7 @@ const Footer = () => {
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
               <Film className="h-8 w-8 text-red-600" />
-              <span className="text-xl font-bold text-white">MovieApp</span>
+              <span className="text-xl font-bold text-white">FilmPedia</span>
             </Link>
             <p className="text-gray-400 text-sm">
               Platform streaming film dan series terbaik untuk pengalaman menonton yang tak terlupakan.
@@ -79,23 +73,6 @@ const Footer = () => {
             <h3 className="text-white font-semibold mb-4">Serial TV</h3>
             <ul className="space-y-2">
               {footerLinks.tvShows.map((link) => (
-                <li key={link.href}>
-                  <Link 
-                    href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Genre Links */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">Genre</h3>
-            <ul className="space-y-2">
-              {footerLinks.genres.map((link) => (
                 <li key={link.href}>
                   <Link 
                     href={link.href}

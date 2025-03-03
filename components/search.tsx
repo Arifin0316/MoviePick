@@ -128,7 +128,7 @@ const Search = () => {
         <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900/90 backdrop-blur-md rounded-lg border border-gray-700 max-h-96 overflow-auto z-50 shadow-xl shadow-black/30">
           {results.map((item) => (
             <Link 
-              href={`/${item.media_type}/${item.id}`} 
+              href={`/${item.id}`} 
               key={`${item.media_type}-${item.id}`}
             >
               <div

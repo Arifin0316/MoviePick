@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search as SearchIcon, X, Loader2, Star } from 'lucide-react';
+import { Search as SearchIcon, X, Loader2, Star, Film, Tv } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+// Gabungkan tipe untuk film dan TV series
 interface SearchResult {
   id: number;
-  title: string;
+  title?: string;
+  name?: string;
   poster_path: string | null;
-  release_date: string;
+  release_date?: string;
+  first_air_date?: string;
   vote_average: number;
+  media_type: 'movie' | 'tv';
 }
 
 const Search = () => {
@@ -34,7 +38,10 @@ const Search = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (query) {
-        searchMovies();
+        searchContent();
+      } else {
+        setResults([]);
+        setIsOpen(false);
       }
     }, 500);
 
@@ -42,7 +49,7 @@ const Search = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
-  const searchMovies = async () => {
+  const searchContent = async () => {
     if (!query) {
       setResults([]);
       return;
@@ -51,15 +58,25 @@ const Search = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&language=id-ID&query=${encodeURIComponent(
+        `https://api.themoviedb.org/3/search/multi?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&language=id-ID&query=${encodeURIComponent(
           query
-        )}&page=1`
+        )}&page=1&include_adult=false`
       );
       const data = await response.json();
-      setResults(data.results.slice(0, 5));
+      
+      // Filter out results without poster or title/name and only keep movies and tv shows
+      const filteredResults = data.results
+        .filter((item: SearchResult) => 
+          ['movie', 'tv'].includes(item.media_type) &&
+          (item.poster_path || item.media_type === 'tv') && 
+          (item.title || item.name)
+        )
+        .slice(0, 5);
+      
+      setResults(filteredResults);
       setIsOpen(true);
     } catch (error) {
-      console.error('Error searching movies:', error);
+      console.error('Error searching content:', error);
     } finally {
       setIsLoading(false);
     }
@@ -71,6 +88,15 @@ const Search = () => {
     setIsOpen(false);
   };
 
+  // Fungsi untuk mendapatkan judul (mendukung film dan TV series)
+  const getTitle = (item: SearchResult) => item.title || item.name || 'Tidak Diketahui';
+
+  // Fungsi untuk mendapatkan tanggal rilis
+  const getReleaseYear = (item: SearchResult) => {
+    const date = item.release_date || item.first_air_date;
+    return date ? date.split('-')[0] : 'TBA';
+  };
+
   return (
     <div className="relative w-full max-w-xl mx-auto" ref={searchRef}>
       {/* Search Input */}
@@ -80,7 +106,7 @@ const Search = () => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Cari film..."
+          placeholder="Cari Film atau Serial TV..."
           className="w-full pl-12 pr-10 py-3 rounded-full bg-gray-800/50 backdrop-blur-sm border border-gray-700 focus:border-red-600 focus:ring-2 focus:ring-red-600/20 text-white placeholder-gray-400 transition-all duration-200 outline-none"
         />
         {query && (
@@ -100,40 +126,54 @@ const Search = () => {
       {/* Search Results Dropdown */}
       {isOpen && results.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900/90 backdrop-blur-md rounded-lg border border-gray-700 max-h-96 overflow-auto z-50 shadow-xl shadow-black/30">
-          {results.map((movie) => (
-            <Link href={`/${movie.id}`} key={movie.id}>
+          {results.map((item) => (
+            <Link 
+              href={`/${item.media_type}/${item.id}`} 
+              key={`${item.media_type}-${item.id}`}
+            >
               <div
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-4 p-4 hover:bg-gray-800/70 transition-colors duration-200 cursor-pointer border-b border-gray-800 last:border-0"
               >
                 <div className="relative w-16 h-24 flex-shrink-0">
-                  {movie.poster_path ? (
+                  {item.poster_path ? (
                     <Image
-                      src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
-                      alt={movie.title}
+                      src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
+                      alt={getTitle(item)}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="rounded object-cover"
                     />
                   ) : (
                     <div className="w-full h-full bg-gray-800 rounded flex items-center justify-center">
-                      <SearchIcon className="w-6 h-6 text-gray-500" />
+                      {item.media_type === 'movie' ? (
+                        <Film className="w-6 h-6 text-gray-500" />
+                      ) : (
+                        <Tv className="w-6 h-6 text-gray-500" />
+                      )}
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-semibold text-white truncate">
-                    {movie.title}
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-white truncate">
+                      {getTitle(item)}
+                    </h3>
+                    {item.media_type === 'movie' ? (
+                      <Film className="w-4 h-4 text-gray-400" />
+                    ) : (
+                      <Tv className="w-4 h-4 text-gray-400" />
+                    )}
+                  </div>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-sm text-gray-400 bg-gray-800/80 px-2 py-0.5 rounded-full">
-                      {movie.release_date?.split('-')[0] || 'TBA'}
+                      {getReleaseYear(item)}
                     </span>
-                    {movie.vote_average > 0 && (
+                    {item.vote_average > 0 && (
                       <div className="flex items-center bg-gray-800/80 px-2 py-0.5 rounded-full">
                         <Star className="w-3 h-3 text-yellow-400 mr-1" fill="#FACC15" />
                         <span className="text-sm text-gray-300">
-                          {movie.vote_average.toFixed(1)}
+                          {item.vote_average.toFixed(1)}
                         </span>
                       </div>
                     )}
@@ -148,7 +188,7 @@ const Search = () => {
       {/* No Results Message */}
       {isOpen && query && !isLoading && results.length === 0 && (
         <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-gray-900/90 backdrop-blur-md rounded-lg border border-gray-700 text-center text-gray-300 shadow-xl shadow-black/30">
-          Tidak ada film yang ditemukan
+          Tidak ada hasil yang ditemukan
         </div>
       )}
     </div>

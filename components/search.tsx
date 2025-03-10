@@ -107,7 +107,7 @@ const Search = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Cari Film atau Serial TV..."
-          className="w-full pl-12 pr-10 py-3 rounded-full bg-gray-800/50 backdrop-blur-sm border border-gray-700 focus:border-red-600 focus:ring-2 focus:ring-red-600/20 text-white placeholder-gray-400 transition-all duration-200 outline-none"
+          className="bg-gray-800/50 w-full text-white font-mono ring-1  focus:ring-2 focus:ring-rose-400 outline-none duration-300 placeholder:text-zinc-600 placeholder:opacity-50 rounded-full pr-10 pl-12 py-3 shadow-md focus:shadow-lg focus:shadow-rose-400 dark:shadow-md "
         />
         {query && (
           <button

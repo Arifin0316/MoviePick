@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Play, Star, ChevronLeft, ChevronRight, Info } from 'lucide-react';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import TrailerModal from './TrailerModal';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Play, Star, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import TrailerModal from "./TrailerModal";
 
 interface Movie {
   id: number;
@@ -25,7 +25,7 @@ const HeroSection = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [trailers, setTrailers] = useState<{[key: number]: Video | null}>({});
+  const [trailers, setTrailers] = useState<{ [key: number]: Video | null }>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTrailer, setCurrentTrailer] = useState<Video | null>(null);
 
@@ -37,12 +37,14 @@ const HeroSection = () => {
         );
         const data = await response.json();
         setMovies(data.results.slice(0, 5));
-        
+
         // Fetch trailers for each movie
-        const movieIds = data.results.slice(0, 5).map((movie: Movie) => movie.id);
+        const movieIds = data.results
+          .slice(0, 5)
+          .map((movie: Movie) => movie.id);
         fetchTrailersForMovies(movieIds);
       } catch (error) {
-        console.error('Error fetching trending movies:', error);
+        console.error("Error fetching trending movies:", error);
       } finally {
         setLoading(false);
       }
@@ -53,29 +55,31 @@ const HeroSection = () => {
 
   const fetchTrailersForMovies = async (movieIds: number[]) => {
     try {
-      const trailerPromises = movieIds.map(id => 
-        fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`)
-          .then(res => res.json())
+      const trailerPromises = movieIds.map((id) =>
+        fetch(
+          `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`
+        ).then((res) => res.json())
       );
-      
+
       const results = await Promise.all(trailerPromises);
-      
-      const trailersMap: {[key: number]: Video | null} = {};
-      
+
+      const trailersMap: { [key: number]: Video | null } = {};
+
       results.forEach((result, index) => {
         const videos = result.results || [];
-        const trailer = videos.find(
-          (video: Video) => 
-            video.type.toLowerCase() === 'trailer' && 
-            video.site.toLowerCase() === 'youtube'
-        ) || null;
-        
+        const trailer =
+          videos.find(
+            (video: Video) =>
+              video.type.toLowerCase() === "trailer" &&
+              video.site.toLowerCase() === "youtube"
+          ) || null;
+
         trailersMap[movieIds[index]] = trailer;
       });
-      
+
       setTrailers(trailersMap);
     } catch (error) {
-      console.error('Error fetching trailers:', error);
+      console.error("Error fetching trailers:", error);
     }
   };
 
@@ -84,7 +88,7 @@ const HeroSection = () => {
     if (movies.length === 0) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
+      setCurrentIndex((prevIndex) =>
         prevIndex === movies.length - 1 ? 0 : prevIndex + 1
       );
     }, 15000);
@@ -94,14 +98,14 @@ const HeroSection = () => {
 
   const handlePrevious = () => {
     if (movies.length === 0) return;
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? movies.length - 1 : prevIndex - 1
     );
   };
 
   const handleNext = () => {
     if (movies.length === 0) return;
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === movies.length - 1 ? 0 : prevIndex + 1
     );
   };
@@ -109,7 +113,7 @@ const HeroSection = () => {
   const handleOpenTrailer = () => {
     const currentMovie = movies[currentIndex];
     const trailer = trailers[currentMovie.id];
-    
+
     if (trailer) {
       setCurrentTrailer(trailer);
       setIsModalOpen(true);
@@ -130,7 +134,7 @@ const HeroSection = () => {
       <div className="relative h-[90vh] w-full overflow-hidden bg-black">
         {/* Background Image */}
         <AnimatePresence mode="wait">
-          <motion.div 
+          <motion.div
             key={currentMovie.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -154,7 +158,7 @@ const HeroSection = () => {
 
         {/* Navigation Buttons */}
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 sm:px-6 lg:px-8 z-20">
-          <motion.button 
+          <motion.button
             onClick={handlePrevious}
             className="group bg-black/30 hover:bg-black/60 text-white p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110 cursor-pointer"
             aria-label="Previous movie"
@@ -163,7 +167,7 @@ const HeroSection = () => {
           >
             <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 group-hover:text-red-500" />
           </motion.button>
-          <motion.button 
+          <motion.button
             onClick={handleNext}
             className="group bg-black/30 hover:bg-black/60 text-white p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110 cursor-pointer"
             aria-label="Next movie"
@@ -177,18 +181,18 @@ const HeroSection = () => {
         {/* Content */}
         <div className="relative h-full container mx-auto px-4 sm:px-6 lg:px-40 2xl:px-8 flex items-center z-10">
           <AnimatePresence mode="wait">
-            <motion.div 
+            <motion.div
               key={currentMovie.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ 
+              transition={{
                 duration: 0.5,
-                staggerChildren: 0.1
+                staggerChildren: 0.1,
               }}
               className="max-w-3xl space-y-6"
             >
-              <motion.h1 
+              <motion.h1
                 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -196,14 +200,14 @@ const HeroSection = () => {
               >
                 {currentMovie.title}
               </motion.h1>
-              
-              <motion.div 
+
+              <motion.div
                 className="flex items-center gap-6"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <motion.div 
+                <motion.div
                   className="flex items-center bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm"
                   whileHover={{ scale: 1.05 }}
                 >
@@ -212,15 +216,15 @@ const HeroSection = () => {
                     {currentMovie.vote_average.toFixed(1)}
                   </span>
                 </motion.div>
-                <motion.span 
+                <motion.span
                   className="text-gray-300 bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm"
                   whileHover={{ scale: 1.05 }}
                 >
                   {new Date(currentMovie.release_date).getFullYear()}
                 </motion.span>
               </motion.div>
-    
-              <motion.p 
+
+              <motion.p
                 className="text-gray-200 text-lg line-clamp-3 max-w-2xl"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -228,32 +232,37 @@ const HeroSection = () => {
               >
                 {currentMovie.overview}
               </motion.p>
-    
-              <motion.div 
+
+              <motion.div
                 className="flex flex-wrap gap-4 pt-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                <motion.button 
+                <motion.button
                   onClick={handleOpenTrailer}
                   disabled={!hasTrailer}
                   className={`group flex items-center gap-2 px-6 py-3 rounded-lg 
-                    ${hasTrailer
-                      ? 'bg-red-600 hover:bg-red-700 text-white' 
-                      : 'bg-gray-700 cursor-not-allowed text-gray-300'
+                    ${
+                      hasTrailer
+                        ? "group/button relative inline-flex items-center justify-center overflow-hidden rounded-md bg-red-500/80 backdrop-blur-lg px-6 py-2 text-base font-semibold text-white transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-xl hover:shadow-red-600/50 border border-white/20"
+                        : "bg-gray-700 cursor-not-allowed text-gray-300"
                     }`}
-                  whileHover={{ scale: hasTrailer ? 1.05 : 1 }}
-                  whileTap={{ scale: hasTrailer ? 0.95 : 1 }}
                 >
+                  <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]">
+                    <div className="relative h-full w-10 bg-white/30"></div>
+                  </div>
                   <Play className="w-5 h-5 group-hover:animate-pulse" />
                   <span className="font-medium">Tonton Trailer</span>
                 </motion.button>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Link href={`/${currentMovie.id}`} className="group bg-gray-800/80 hover:bg-gray-700 text-white px-6 py-3 rounded-lg flex items-center gap-2">
+                <motion.div>
+                  <Link
+                    href={`/${currentMovie.id}`}
+                    className="group/button relative inline-flex items-center justify-center overflow-hidden rounded-md bg-gray-700/80 backdrop-blur-lg px-6 py-3 text-base font-semibold text-white transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-xl hover:shadow-gray-600/50 border border-white/20"
+                  >
+                    <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]">
+                      <div className="relative h-full w-10 bg-white/30"></div>
+                    </div>
                     <Info className="w-5 h-5" />
                     <span className="font-medium">Info Detail</span>
                   </Link>
@@ -270,14 +279,14 @@ const HeroSection = () => {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`h-2 rounded-full ${
-                index === currentIndex 
-                  ? 'bg-red-600' 
-                  : 'bg-white/50 hover:bg-white/80'
+                index === currentIndex
+                  ? "bg-red-600"
+                  : "bg-white/50 hover:bg-white/80"
               }`}
               initial={false}
-              animate={{ 
+              animate={{
                 width: index === currentIndex ? 32 : 8,
-                transition: { duration: 0.3 } 
+                transition: { duration: 0.3 },
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
